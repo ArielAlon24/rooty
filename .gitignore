@@ -1,2 +1,19 @@
 .DS_Store
 vm/
+
+# Genereated Files
+.Module.symvers.cmd
+.modules.order.cmd
+
+Module.symvers
+modules.order
+
+src/.rooty.ko.cmd
+src/.rooty.mod.cmd
+src/.rooty.mod.o.cmd
+src/.rooty.o.cmd
+src/rooty.ko
+src/rooty.mod
+src/rooty.mod.c
+src/rooty.mod.o
+src/rooty.o
