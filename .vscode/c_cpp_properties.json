@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "defines": [
+                "__KERNEL__",
+                "MODULE"
+            ],
+            "includePath": [
+                "/usr/src/linux-headers-6.8.0-40-generic/arch/arm64/include",
+                "/usr/src/linux-headers-6.8.0-40-generic/arch/arm64/include/generated",
+                "/usr/src/linux-headers-6.8.0-40-generic/include",
+                "/usr/src/linux-headers-6.8.0-40-generic/arch/arm64/include/uapi",
+                "/usr/src/linux-headers-6.8.0-40-generic/arch/arm64/include/generated/uapi",
+                "/usr/src/linux-headers-6.8.0-40-generic/include/uapi",
+                "/usr/src/linux-headers-6.8.0-40-generic/include/generated/uapi",
+                "/usr/src/linux-headers-6.8.0-40-generic/ubuntu/include",
+                "/usr/lib/gcc/aarch64-linux-gnu/13/include"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm64",
+            "configurationProvider": "ms-vscode.makefile-tools",
+            "compilerArgs": [
+                "-nostdinc",
+                "-include", "/usr/src/linux-headers-6.8.0-40-generic/include/linux/kconfig.h",
+                "-include", "/usr/src/linux-headers-6.8.0-40-generic/include/linux/compiler_types.h"
+            ]
+        }
+    ],
+    "version": 4
+}
