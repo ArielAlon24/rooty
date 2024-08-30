@@ -9,12 +9,14 @@
 
 #define SYSCALL_NAME(name) "__arm64_sys_" name
 
-#define HOOK(_name, _hook, _orig)                                                                  \
-    {                                                                                              \
-        .name = SYSCALL_NAME(_name),                                                               \
-        .function = (_hook),                                                                       \
-        .original = (_orig),                                                                       \
+#define SYSCALL_HOOK(_name, _function, _original)             \
+    {                                                         \
+        .name = SYSCALL_NAME(_name), .function = (_function), \
+        .original = (_original),                              \
     }
+
+#define HOOK(_name, _function, _original) \
+    { .name = (_name), .function = (_function), .original = (_original), }
 
 #define USE_FENTRY_OFFSET 0
 #if !USE_FENTRY_OFFSET
@@ -60,9 +62,8 @@ static int fh_resolve_hook_address(struct ftrace_hook *hook) {
     return 0;
 }
 
-static void fh_ftrace_thunk(unsigned long ip, unsigned long parent_ip, struct ftrace_ops *ops,
-                            struct ftrace_regs *fregs) {
-
+static void fh_ftrace_thunk(unsigned long ip, unsigned long parent_ip,
+                            struct ftrace_ops *ops, struct ftrace_regs *fregs) {
     struct ftrace_hook *hook = container_of(ops, struct ftrace_hook, ops);
 
 #if USE_FENTRY_OFFSET
@@ -77,12 +78,11 @@ int fh_install_hook(struct ftrace_hook *hook) {
     int err;
 
     err = fh_resolve_hook_address(hook);
-    if (err)
-        return err;
+    if (err) return err;
 
     hook->ops.func = fh_ftrace_thunk;
-    hook->ops.flags =
-        FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED | FTRACE_OPS_FL_IPMODIFY | FTRACE_OPS_FL_RECURSION;
+    hook->ops.flags = FTRACE_OPS_FL_SAVE_REGS_IF_SUPPORTED |
+                      FTRACE_OPS_FL_IPMODIFY | FTRACE_OPS_FL_RECURSION;
 
     err = ftrace_set_filter_ip(&hook->ops, hook->address, 0, 0);
 
@@ -91,13 +91,13 @@ int fh_install_hook(struct ftrace_hook *hook) {
         return err;
     }
 
-    INFO("hook->address = %lx\n", hook->address);
-
     err = register_ftrace_function(&hook->ops);
     if (err) {
         WARNING("register_ftrace_function() failed: %d\n", err);
         return err;
     }
+
+    INFO("Installed hook for syscall '%s'", hook->name);
 
     return 0;
 }
@@ -122,8 +122,7 @@ int fh_install_hooks(struct ftrace_hook *hooks, size_t count) {
 
     for (i = 0; i < count; i++) {
         err = fh_install_hook(&hooks[i]);
-        if (err)
-            goto error;
+        if (err) goto error;
     }
     return 0;
 
@@ -137,6 +136,5 @@ error:
 void fh_remove_hooks(struct ftrace_hook *hooks, size_t count) {
     size_t i;
 
-    for (i = 0; i < count; i++)
-        fh_remove_hook(&hooks[i]);
+    for (i = 0; i < count; i++) fh_remove_hook(&hooks[i]);
 }
